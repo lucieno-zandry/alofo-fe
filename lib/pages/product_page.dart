@@ -313,6 +313,7 @@ class ProductPage extends StatelessWidget {
                                 Wrap(
                                   spacing: 10,
                                   runSpacing: 10,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     SizedBox(
                                       width: 125,
