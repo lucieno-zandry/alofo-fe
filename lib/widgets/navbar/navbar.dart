@@ -1,5 +1,6 @@
 import 'package:alofo/classes/app_colors.dart';
 import 'package:alofo/classes/screen.dart';
+import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/navbar/navbar_xl.dart';
 import 'package:alofo/widgets/navbar/navbar_xs.dart';
 import 'package:alofo/types/nav_link_data.dart';
@@ -8,14 +9,11 @@ import 'package:go_router/go_router.dart';
 
 Map<String, Map<String, Color>> navbarTheme = {
   '/': {'color': AppColors.light(), 'backgroundColor': AppColors.primary()},
-  '/product/:id': {
-    'color': AppColors.dark(),
-    'backgroundColor': AppColors.light(),
-  },
+  'default': {'color': AppColors.dark(), 'backgroundColor': AppColors.light()},
 };
 
 List<NavLinkData> leftActions(BuildContext context) => [
-  NavLinkData(child: Text('PRODUCTS'), href: '/products'),
+  NavLinkData(child: Text('PRODUITS'), href: '/products'),
   NavLinkData(child: Text('WOMEN'), href: '/women'),
   NavLinkData(child: Text('MEN'), href: '/men'),
   NavLinkData(child: Text('ACCESSORIES'), href: '/accessories'),
@@ -29,7 +27,15 @@ List<Widget> rightActions(BuildContext context) {
     Text('CONTACT US'),
     Text('\$0.00'),
     IconButton(onPressed: () {}, icon: Icon(Icons.shopping_bag, color: color)),
-    IconButton(onPressed: () {}, icon: Icon(Icons.person, color: color)),
+    IconButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AuthDialog(),
+        );
+      },
+      icon: Icon(Icons.person, color: color),
+    ),
   ];
 }
 
@@ -39,8 +45,11 @@ class Navbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? currentPath = GoRouter.of(context).state.path;
-    Color? backgroundColor = navbarTheme[currentPath]?['backgroundColor'];
-    Color? color = navbarTheme[currentPath]?['color'];
+    Color backgroundColor =
+        navbarTheme[currentPath]?['backgroundColor'] ??
+        navbarTheme['default']!['backgroundColor']!;
+    Color color =
+        navbarTheme[currentPath]?['color'] ?? navbarTheme['default']!['color']!;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30),

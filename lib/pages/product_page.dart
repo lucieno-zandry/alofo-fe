@@ -226,121 +226,133 @@ class ProductPage extends StatelessWidget {
                   ? null
                   : () {};
 
-          return AppContainer(
-            child: ListView(
-              children: [
-                SizedBox(height: 125),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.start,
-                      runSpacing: 20,
-                      children: [
-                        Picture(
-                          filename: pictureFilename,
-                          width: Screen.percentageOf(
-                            constraints.maxWidth,
-                            Screen.responsive(
-                              width: constraints.maxWidth,
-                              standard: 100,
-                              md: 45,
+          return ListView(
+            children: [
+              AppContainer(
+                child: Column(
+                  children: [
+                    SizedBox(height: 125),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.start,
+                          runSpacing: 20,
+                          spacing: 50,
+                          children: [
+                            Picture(
+                              filename: pictureFilename,
+                              width: Screen.percentageOf(
+                                constraints.maxWidth,
+                                Screen.responsive(
+                                  width: constraints.maxWidth,
+                                  standard: 100,
+                                  md: 45,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: Screen.percentageOf(
-                            constraints.maxWidth,
-                            Screen.responsive(
-                              width: constraints.maxWidth,
-                              standard: 100,
-                              md: 45,
-                            ),
-                          ),
-                          child: Column(
-                            spacing: 10,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (product.category?.title != null)
-                                Text(
-                                  product.category!.title!,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.copyWith(
-                                    color: AppColors.dark(alpha: 150),
-                                  ),
+                            SizedBox(
+                              width: Screen.percentageOf(
+                                constraints.maxWidth,
+                                Screen.responsive(
+                                  width: constraints.maxWidth,
+                                  standard: 100,
+                                  md: 45,
                                 ),
-                              if (product.title != null)
-                                Text(
-                                  product.title!,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall!
-                                      .copyWith(color: AppColors.dark()),
-                                ),
-                              if (selectedVariant != null)
-                                Text(
-                                  "\$${selectedVariant.price.toString()}",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium!
-                                      .copyWith(color: AppColors.dark()),
-                                ),
-
-                              if (selectedVariant != null)
-                                Text(
-                                  "Selected : ${selectedVariant.sku}",
-                                  style: Theme.of(context).textTheme.titleSmall!
-                                      .copyWith(color: AppColors.dark()),
-                                ),
-                              if (product.description != null)
-                                Text(
-                                  product.description!,
-                                  style: Theme.of(context).textTheme.bodyLarge!
-                                      .copyWith(color: AppColors.dark()),
-                                ),
-                              if (product.variantGroups != null &&
-                                  product.variantGroups!.isNotEmpty)
-                                for (var variantGroup in product.variantGroups!)
-                                  VariantGroup(
-                                    variantGroup: variantGroup,
-                                    selectedVariant: selectedVariant,
-                                    activeVariantOptions: activeVariantOptions,
-                                    onVariantOptionSelected:
-                                        onVariantOptionSelected,
-                                  ),
-                              if (selectedVariant != null)
-                                Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 125,
-                                      child: NumberInput(
-                                        max: selectedVariant.stock!,
-                                        min: minItemCount,
-                                        value: itemCount,
-                                        onChanged: state.setItemCount,
+                              ),
+                              child: Column(
+                                spacing: 10,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (product.category?.title != null)
+                                    Text(
+                                      product.category!.title!,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge!.copyWith(
+                                        color: AppColors.dark(alpha: 150),
                                       ),
                                     ),
-                                    Button(
-                                      onPressed: onPressed,
-                                      variant: 'primary',
-                                      child: Text('ADD TO CART'),
+                                  if (product.title != null)
+                                    Text(
+                                      product.title!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall!
+                                          .copyWith(color: AppColors.dark()),
                                     ),
-                                  ],
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                                  if (selectedVariant != null)
+                                    Text(
+                                      "\$${selectedVariant.price.toString()}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(color: AppColors.dark()),
+                                    ),
+
+                                  if (selectedVariant != null)
+                                    Text(
+                                      "Selected : ${selectedVariant.sku}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall!
+                                          .copyWith(color: AppColors.dark()),
+                                    ),
+                                  if (product.description != null)
+                                    Text(
+                                      product.description!,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(color: AppColors.dark()),
+                                    ),
+                                  if (product.variantGroups != null &&
+                                      product.variantGroups!.isNotEmpty)
+                                    for (var variantGroup
+                                        in product.variantGroups!)
+                                      VariantGroup(
+                                        variantGroup: variantGroup,
+                                        selectedVariant: selectedVariant,
+                                        activeVariantOptions:
+                                            activeVariantOptions,
+                                        onVariantOptionSelected:
+                                            onVariantOptionSelected,
+                                      ),
+                                  if (selectedVariant != null)
+                                    Wrap(
+                                      spacing: 10,
+                                      runSpacing: 10,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 125,
+                                          child: NumberInput(
+                                            max: selectedVariant.stock!,
+                                            min: minItemCount,
+                                            value: itemCount,
+                                            onChanged: state.setItemCount,
+                                          ),
+                                        ),
+                                        Button(
+                                          onPressed: onPressed,
+                                          variant: 'primary',
+                                          child: Text('ADD TO CART'),
+                                        ),
+                                      ],
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    SizedBox(height: 100),
+                  ],
                 ),
-                SizedBox(height: 100),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),

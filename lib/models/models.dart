@@ -5,3 +5,4 @@ export 'package:alofo/models/promotion.dart';
 export 'package:alofo/models/variant.dart';
 export 'package:alofo/models/variant_group.dart';
 export 'package:alofo/models/variant_option.dart';
+export 'package:alofo/models/user.dart';

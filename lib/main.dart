@@ -2,7 +2,6 @@ import 'package:alofo/configs/router.dart';
 import 'package:alofo/configs/theme_data.dart';
 import 'package:flutter/material.dart';
 
-
 void main() {
   runApp(const MainApp());
 }

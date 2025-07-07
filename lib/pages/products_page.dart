@@ -172,7 +172,7 @@ class _ProductsPageState extends State<ProductsPage> {
                         width: constraints.maxWidth,
                         child: Wrap(
                           runSpacing: 30,
-                          alignment: WrapAlignment.spaceAround,
+                          spacing: 20,
                           children: [
                             for (var product in mockProducts)
                               ProductCard(product: product),

@@ -43,8 +43,23 @@ class ProductCard extends StatelessWidget {
                   aspectRatio: 1,
                   child:
                       image?.filename != null
-                          ? Image.network(image!.filename!, fit: BoxFit.contain)
-                          : null,
+                          ? Image.network(
+                            image!.filename!,
+                            fit: BoxFit.contain,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(child: CircularProgressIndicator());
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(child: Icon(Icons.broken_image));
+                            },
+                          )
+                          : Container(
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: Icon(Icons.image_not_supported),
+                            ),
+                          ),
                 ),
                 SizedBox(height: 10),
                 if (product.title != null)

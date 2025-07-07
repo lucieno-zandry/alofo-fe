@@ -1,0 +1,63 @@
+class User {
+  int? id;
+  String? name;
+  String? email;
+  DateTime? emailVerifiedAt;
+  DateTime? approvedAt;
+  String? role;
+  String? image;
+  DateTime? createdAt;
+  DateTime? updatedAt;
+  int? addressId;
+  int? clientCodeId;
+
+  User({
+    this.id,
+    this.name,
+    this.email,
+    this.emailVerifiedAt,
+    this.approvedAt,
+    this.role,
+    this.image,
+    this.createdAt,
+    this.updatedAt,
+    this.addressId,
+    this.clientCodeId,
+  });
+
+  static User fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      emailVerifiedAt:
+          json['email_verified_at']
+              ? DateTime.parse(json['email_verified_at'])
+              : null,
+      approvedAt:
+          json['approved_at'] ? DateTime.parse(json['approved_at']) : null,
+      createdAt: json['created_at'] ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] ? DateTime.parse(json['updated_at']) : null,
+      addressId: json['address_id'],
+      clientCodeId: json['client_code_id'],
+      role: json['role'] ?? 'client',
+      image: json['image'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'email_verified_at': emailVerifiedAt,
+      'approved_at': approvedAt,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'address_id': addressId,
+      'client_code_id': clientCodeId,
+      'role': role,
+      'image': image,
+    };
+  }
+}

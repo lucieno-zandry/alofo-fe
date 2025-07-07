@@ -8,22 +8,24 @@ class Button extends StatelessWidget {
     required this.onPressed,
     required this.child,
     this.variant = 'primary',
+    this.isLoading = false,
   });
 
   final VoidCallback? onPressed;
   final Widget child;
   final String variant;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
     final padding = getResponsivePadding(MediaQuery.of(context).size.width);
     final style = _getStyleFromVariant(variant);
-    final bool isDisabled = onPressed == null;
+    final bool isDisabled = onPressed == null || isLoading;
 
     return Opacity(
-      opacity: isDisabled ? 0.5 : 1.0, // Dim opacity if disabled
+      opacity: isDisabled ? 0.5 : 1.0, // Dim opacity if disabled or loading
       child: TextButton(
-        onPressed: onPressed,
+        onPressed: isDisabled ? null : onPressed,
         style: ButtonStyle(
           padding: WidgetStateProperty.all<EdgeInsets>(padding),
           backgroundColor: WidgetStateProperty.resolveWith<Color>((states) {
@@ -46,7 +48,16 @@ class Button extends StatelessWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
         ),
-        child: child,
+        child: isLoading
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(style.foregroundColor),
+                  strokeWidth: 2,
+                ),
+              )
+            : child,
       ),
     );
   }
