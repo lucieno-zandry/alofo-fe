@@ -29,8 +29,8 @@ class VariantGroup {
       id: json['id'] as int?,
       name: json['name'] as String?,
       productId: json['product_id'] as int?,
-      createdAt: json['created_at'] ? DateTime.parse(json['created_at']) : null,
-      updatedAt: json['updated_at'] ? DateTime.parse(json['updated_at']) : null,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
       variantOptions: variantOptions,
     );
   }

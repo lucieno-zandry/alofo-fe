@@ -7,6 +7,7 @@ class TextInput extends StatelessWidget {
   final String? errorText;
   final Widget? suffixIcon;
   final bool obscureText;
+  final TextEditingController? controller;
 
   const TextInput({
     super.key,
@@ -16,6 +17,7 @@ class TextInput extends StatelessWidget {
     this.errorText,
     this.suffixIcon,
     this.obscureText = false,
+    this.controller,
   });
 
   @override
@@ -23,15 +25,14 @@ class TextInput extends StatelessWidget {
     return TextFormField(
       obscureText: obscureText,
       decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.zero),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.zero)),
         label: Text(label),
         errorText: errorText,
         suffixIcon: suffixIcon,
       ),
       onChanged: onChanged,
       validator: validator,
+      controller: controller,
     );
   }
 }

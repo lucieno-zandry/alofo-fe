@@ -6,6 +6,7 @@ class PasswordInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final String label;
   final String? errorText;
+  final TextEditingController? controller;
 
   const PasswordInput({
     super.key,
@@ -13,6 +14,7 @@ class PasswordInput extends StatefulWidget {
     this.validator,
     this.label = 'Password',
     this.errorText,
+    this.controller,
   });
 
   @override
@@ -28,6 +30,7 @@ class _PasswordFieldState extends State<PasswordInput> {
       obscureText: !_isPasswordVisible,
       label: widget.label,
       errorText: widget.errorText,
+      controller: widget.controller,
       suffixIcon: IconButton(
         icon: Icon(
           _isPasswordVisible ? Icons.visibility : Icons.visibility_off,

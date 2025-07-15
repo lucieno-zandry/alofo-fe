@@ -34,12 +34,12 @@ class Promotion {
     return Promotion(
       id: json['id'],
       discount: json['discount'],
-      endDate: json['end_date'] ? DateTime.parse(json['end_date']) : null,
-      startDate: json['start_date'] ? DateTime.parse(json['start_date']) : null,
+      endDate: json['end_date'] != null ? DateTime.parse(json['end_date']) : null,
+      startDate: json['start_date'] != null ? DateTime.parse(json['start_date']) : null,
       isActive: json['is_active'],
       type: json['type'],
-      createdAt: json['created_at'] ? DateTime.parse(json['created_at']) : null,
-      updatedAt: json['updated_at'] ? DateTime.parse(json['updated_at']) : null,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
       variants: variants,
     );
   }

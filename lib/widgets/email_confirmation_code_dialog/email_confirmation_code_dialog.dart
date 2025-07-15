@@ -1,7 +1,9 @@
 import 'package:alofo/classes/app_colors.dart';
 import 'package:alofo/http/requests.dart';
+import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EmailConfirmationCodeDialog extends StatefulWidget {
   const EmailConfirmationCodeDialog({super.key});
@@ -46,32 +48,37 @@ class _EmailConfirmationCodeDialogState
     setState(() {});
   }
 
-  void _onSubmit() {
-    setState(() {
-      isLoading = true;
-    });
-
-    final code = _controllers.map((c) => c.text).join();
-    matchConfirmationCode(code)
-        .then((response) {
-          if (response['error']?['email'] != null) {
-            setState(() {
-              validationMessage = response['error']['email'];
-            });
-          }
-        })
-        .catchError((error) {
-          setState(() {});
-        })
-        .whenComplete(() {
-          setState(() {
-            isLoading = false;
-          });
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
+    AuthDialogState state = Get.find<AuthDialogState>();
+
+    void onSubmit() {
+      setState(() {
+        isLoading = true;
+      });
+
+      final code = _controllers.map((c) => c.text).join();
+
+      matchConfirmationCode(code)
+          .then((response) {
+            if (response['errors']?['email'] != null) {
+              setState(() {
+                validationMessage = response['errors']['email'][0];
+              });
+            } else {
+              state.setActive(++state.active);
+            }
+          })
+          .catchError((error) {
+            setState(() {});
+          })
+          .whenComplete(() {
+            setState(() {
+              isLoading = false;
+            });
+          });
+    }
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: 15,
@@ -106,7 +113,8 @@ class _EmailConfirmationCodeDialogState
             ).textTheme.bodyMedium!.copyWith(color: AppColors.danger()),
           ),
         Button(
-          onPressed: _isFilled ? _onSubmit : null,
+          onPressed: _isFilled ? onSubmit : null,
+          isLoading: isLoading,
           child: const Text('Confirm'),
         ),
       ],

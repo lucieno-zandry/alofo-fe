@@ -10,6 +10,7 @@ class User {
   DateTime? updatedAt;
   int? addressId;
   int? clientCodeId;
+  String? password;
 
   User({
     this.id,
@@ -23,6 +24,7 @@ class User {
     this.updatedAt,
     this.addressId,
     this.clientCodeId,
+    this.password,
   });
 
   static User fromJson(Map<String, dynamic> json) {
@@ -31,17 +33,26 @@ class User {
       name: json['name'],
       email: json['email'],
       emailVerifiedAt:
-          json['email_verified_at']
+          json['email_verified_at'] != null
               ? DateTime.parse(json['email_verified_at'])
               : null,
       approvedAt:
-          json['approved_at'] ? DateTime.parse(json['approved_at']) : null,
-      createdAt: json['created_at'] ? DateTime.parse(json['created_at']) : null,
-      updatedAt: json['updated_at'] ? DateTime.parse(json['updated_at']) : null,
+          json['approved_at'] != null
+              ? DateTime.parse(json['approved_at'])
+              : null,
+      createdAt:
+          json['created_at'] != null
+              ? DateTime.parse(json['created_at'])
+              : null,
+      updatedAt:
+          json['updated_at'] != null
+              ? DateTime.parse(json['updated_at'])
+              : null,
       addressId: json['address_id'],
       clientCodeId: json['client_code_id'],
       role: json['role'] ?? 'client',
       image: json['image'],
+      password: json['password'],
     );
   }
 
@@ -58,6 +69,7 @@ class User {
       'client_code_id': clientCodeId,
       'role': role,
       'image': image,
+      'password': password,
     };
   }
 }

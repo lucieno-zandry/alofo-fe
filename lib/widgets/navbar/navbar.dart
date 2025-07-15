@@ -1,9 +1,10 @@
 import 'package:alofo/classes/app_colors.dart';
 import 'package:alofo/classes/screen.dart';
-import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
+import 'package:alofo/widgets/auth_dialog_toggler/auth_dialog_toggler.dart';
 import 'package:alofo/widgets/navbar/navbar_xl.dart';
 import 'package:alofo/widgets/navbar/navbar_xs.dart';
 import 'package:alofo/types/nav_link_data.dart';
+import 'package:alofo/widgets/user_dropdown/user_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,15 +28,8 @@ List<Widget> rightActions(BuildContext context) {
     Text('CONTACT US'),
     Text('\$0.00'),
     IconButton(onPressed: () {}, icon: Icon(Icons.shopping_bag, color: color)),
-    IconButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => AuthDialog(),
-        );
-      },
-      icon: Icon(Icons.person, color: color),
-    ),
+    AuthDialogToggler(),
+    UserDropdown(),
   ];
 }
 
