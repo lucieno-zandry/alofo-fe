@@ -1,3 +1,4 @@
+import 'package:alofo/functions/debug.dart';
 import 'package:alofo/functions/get_validation_message.dart';
 import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
@@ -18,6 +19,7 @@ class CreateUsernameDialog extends StatefulWidget {
 class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
   String? errorText;
   final controller = TextEditingController();
+  bool isLoading = false;
 
   bool get isValid => controller.text != '' && errorText == null;
 
@@ -40,32 +42,38 @@ class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
   Widget build(BuildContext context) {
     AuthDialogState state = Get.find<AuthDialogState>();
     FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
-    bool isLoading = false;
 
     void onSubmited() {
       if (!isValid || frontOfficeState.user == null) return;
+      var user = frontOfficeState.user!;
+      user.name = controller.text;
+
       setState(() {
         isLoading = true;
       });
 
-      var user = frontOfficeState.user!;
-      user.name = controller.text;
-
-      updateUser(user)
+      updateUser({'name': user.name})
           .then((response) {
-            if (response['data']?['user'] != null) {
-              var newUser = User.fromJson(response['data']['user']);
+            if (response.data?['user'] != null) {
+              var newUser = User.fromJson(response.data!['user']);
               frontOfficeState.setUser(newUser);
+              state.setActive(++state.active);
             }
           })
-          .catchError((error) {})
+          .catchError((error) {
+            if (error is Map && error['message'] != null) {
+              setState(() {
+                errorText = error['message'];
+              });
+            } else {
+              debug(context, error);
+            }
+          })
           .whenComplete(() {
             setState(() {
               isLoading = false;
             });
           });
-
-      state.setActive(++state.active);
     }
 
     return Column(
@@ -85,7 +93,7 @@ class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
         Button(
           onPressed: isValid ? onSubmited : null,
           isLoading: isLoading,
-          child: Text('Continue'),
+          child: Text('CONTINUE'),
         ),
       ],
     );

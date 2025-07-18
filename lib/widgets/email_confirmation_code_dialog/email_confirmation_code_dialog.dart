@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:alofo/classes/app_colors.dart';
 import 'package:alofo/http/requests.dart';
+import 'package:alofo/models/models.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
+import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class EmailConfirmationCodeDialog extends StatefulWidget {
@@ -23,6 +28,9 @@ class _EmailConfirmationCodeDialogState
   String? validationMessage;
   bool isLoading = false;
 
+  int _resendTimeout = 60;
+  Timer? _timer;
+
   @override
   void dispose() {
     for (final c in _controllers) {
@@ -31,7 +39,55 @@ class _EmailConfirmationCodeDialogState
     for (final f in _focusNodes) {
       f.dispose();
     }
+    _timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    requestToSendConfirmationCode();
+    _startResendTimer();
+  }
+
+  void _startResendTimer() {
+    setState(() {
+      _resendTimeout = 60;
+    });
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_resendTimeout == 0) {
+        timer.cancel();
+      } else {
+        setState(() {
+          _resendTimeout--;
+        });
+      }
+    });
+  }
+
+  void requestToSendConfirmationCode() {
+    sendConfirmationCode()
+        .then((response) {
+          if (response.data?['link_sent'] != null &&
+              response.data!['link_sent']) {
+            Fluttertoast.showToast(
+              msg: 'Email confirmation code sent!',
+              gravity: ToastGravity.TOP_RIGHT,
+            );
+          }
+        })
+        .onError((error, trace) {
+          Fluttertoast.showToast(
+            msg: error.toString(),
+            gravity: ToastGravity.TOP_RIGHT,
+          );
+        });
+  }
+
+  void _onResendPressed() {
+    requestToSendConfirmationCode();
+    _startResendTimer();
   }
 
   bool get _isFilled => _controllers.every(
@@ -51,6 +107,7 @@ class _EmailConfirmationCodeDialogState
   @override
   Widget build(BuildContext context) {
     AuthDialogState state = Get.find<AuthDialogState>();
+    FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
 
     void onSubmit() {
       setState(() {
@@ -61,16 +118,20 @@ class _EmailConfirmationCodeDialogState
 
       matchConfirmationCode(code)
           .then((response) {
-            if (response['errors']?['email'] != null) {
-              setState(() {
-                validationMessage = response['errors']['email'][0];
-              });
-            } else {
+            if (response.data?['user'] != null) {
+              var user = User.fromJson(response.data!['user']);
+              frontOfficeState.setUser(user);
               state.setActive(++state.active);
             }
           })
           .catchError((error) {
-            setState(() {});
+            if (error is Map) {
+              if (error['errors']?['code'] != null) {
+                setState(() {
+                  validationMessage = error['errors']['code'][0];
+                });
+              }
+            }
           })
           .whenComplete(() {
             setState(() {
@@ -116,6 +177,14 @@ class _EmailConfirmationCodeDialogState
           onPressed: _isFilled ? onSubmit : null,
           isLoading: isLoading,
           child: const Text('Confirm'),
+        ),
+        Button(
+          variant: 'dark',
+          onPressed: _resendTimeout == 0 ? _onResendPressed : null,
+          child:
+              _resendTimeout == 0
+                  ? const Text('Resend Email')
+                  : Text('Resend Email ($_resendTimeout)'),
         ),
       ],
     );

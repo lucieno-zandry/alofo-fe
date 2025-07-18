@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 
 class AuthDialogState extends GetxController {
-  int active = 0;
+  AuthDialogState({this.active = 0});
+  
+  int active;
 
   setActive(int newActive) {
     active = newActive;

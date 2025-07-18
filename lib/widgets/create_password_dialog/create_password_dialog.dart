@@ -1,5 +1,6 @@
 import 'package:alofo/functions/get_validation_message.dart';
 import 'package:alofo/http/requests.dart';
+import 'package:alofo/models/models.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:alofo/widgets/input/password_input.dart';
@@ -48,10 +49,11 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
     });
   }
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
-    bool isLoading = false;
 
     void onSubmited() {
       if (!isValid || frontOfficeState.user == null) return;
@@ -62,10 +64,15 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
         isLoading = true;
       });
 
-      updateUser(user)
+      updateUser({'password': user.password})
           .then((response) {
-            if (response['data']?['user'] != null) {
-              frontOfficeState.setUser(response['data']['user']);
+            if (response.data?['user'] != null) {
+              var newUser = User.fromJson(response.data!['user']);
+              frontOfficeState.setUser(newUser);
+
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
             }
           })
           .catchError((error) {})

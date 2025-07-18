@@ -8,13 +8,25 @@ import 'package:alofo/widgets/page_selector/page_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+const authDialogMap = {
+  'login': 0,
+  'confirm_email': 1,
+  'create_username': 2,
+  'create_password': 3,
+};
+
 class AuthDialog extends StatelessWidget {
-  const AuthDialog({super.key});
+  const AuthDialog({super.key, this.withDefault = 'login'});
+
+  final String withDefault;
+
+  int get defaultActive =>
+      authDialogMap[withDefault] != null ? authDialogMap[withDefault]! : 0;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    Get.put(AuthDialogState());
+    Get.put(AuthDialogState(active: defaultActive));
 
     return AlertDialog(
       title: Text('Login / Register', textAlign: TextAlign.center),
@@ -44,9 +56,29 @@ class AuthDialog extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Close'),
+        GetBuilder<AuthDialogState>(
+          builder: (state) {
+            return Row(
+              spacing: 10,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                if (state.active > 0)
+                  TextButton(
+                    onPressed: () {
+                      state.setActive(--state.active);
+                    },
+                    child: Row(
+                      spacing: 5,
+                      children: [Icon(Icons.arrow_back), Text('Back')],
+                    ),
+                  ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('Close'),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

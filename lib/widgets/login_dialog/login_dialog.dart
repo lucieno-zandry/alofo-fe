@@ -1,5 +1,7 @@
+import 'package:alofo/classes/local_storage.dart';
 import 'package:alofo/functions/debug.dart';
 import 'package:alofo/functions/get_validation_message.dart';
+import 'package:alofo/http/app_http.dart';
 import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
@@ -103,38 +105,43 @@ class _LoginDialogState extends State<LoginDialog> {
     AuthDialogState state = Get.find<AuthDialogState>();
     FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
 
-    void onLoginSubmited() {
-      logIn(form['email']!, form['password']!)
-          .then((response) {
-            if (response['errors'] != null) {
-              if (response['errors']?['email'] != null) {
-                updateValidationMessages(
-                  name: 'email',
-                  validationMessage: response['errors']!['email']![0],
-                );
-              }
+    Future<Null> handleAuthentication({
+      required Future<AppResponse> Function() authenticate,
+      void Function()? onSuccess,
+    }) {
+      return authenticate()
+          .then((response) async {
+            if (response.data?['auth'] != null &&
+                response.data?['token'] != null) {
+              User user = User.fromJson(response.data!['auth']);
+              frontOfficeState.setUser(user);
 
-              if (response['errors']?['password'] != null) {
-                updateValidationMessages(
-                  name: 'password',
-                  validationMessage: response['errors']!['password']![0],
-                );
-              }
-            } else if (response['data'] != null) {
-              if (response['data']!['user'] != null) {
-                User user = User.fromJson(response['data']!['user']!);
-                // user is an instance of 'User' here, so it works
-                frontOfficeState.setUser(user);
+              await LocalStorage.saveItem(
+                'authorization_token',
+                response.data!['token'],
+              );
 
-                if (context.mounted) {
-                  Navigator.of(context).pop();
-                }
-                // close the current dialog here
+              if (onSuccess != null) {
+                onSuccess();
               }
             }
           })
           .onError((error, trace) {
-            if (context.mounted) {
+            if (error is Map && error['errors'] != null) {
+              if (error['errors']?['email'] != null) {
+                updateValidationMessages(
+                  name: 'email',
+                  validationMessage: error['errors']!['email']![0],
+                );
+              }
+
+              if (error['errors']?['password'] != null) {
+                updateValidationMessages(
+                  name: 'password',
+                  validationMessage: error['errors']!['password']![0],
+                );
+              }
+            } else if (context.mounted) {
               debug(context, error);
             }
           })
@@ -145,18 +152,50 @@ class _LoginDialogState extends State<LoginDialog> {
           });
     }
 
+    Future<Null> onLoginSubmited() {
+      return handleAuthentication(
+        authenticate: () => logIn(form['email']!, form['password']!),
+        onSuccess: () {
+          if (context.mounted) {
+            Navigator.of(context).pop();
+          }
+        },
+      );
+    }
+
+    Future<Null> onRegisterSubmited() {
+      return handleAuthentication(
+        authenticate: () => register(form['email']!),
+        onSuccess: () {
+          state.setActive(++state.active);
+        },
+      );
+    }
+
     void onCheckEmailSubmited() {
       getEmailInfo(form['email']!)
-          .then((response) {
-            if (response['is_taken']!) {
+          .then((response) async {
+            if (response.data != null &&
+                response.data!['is_taken'] != null &&
+                response.data!['is_taken'] == true) {
               setState(() {
                 accountExists = true;
               });
             } else {
-              state.setActive(++state.active);
+              await onRegisterSubmited();
             }
           })
-          .onError((error, stackTrace) {})
+          .onError((error, stackTrace) {
+            if (error == null || error is! Map) return;
+            if (error['message'] != null) {
+              updateValidationMessages(
+                name: 'email',
+                validationMessage: error['message'],
+              );
+            } else {
+              debug(context, error);
+            }
+          })
           .whenComplete(() {
             setState(() {
               isLoading = false;
