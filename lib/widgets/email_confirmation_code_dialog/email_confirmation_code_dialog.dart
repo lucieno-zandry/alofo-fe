@@ -5,6 +5,7 @@ import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
+import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -77,7 +78,7 @@ class _EmailConfirmationCodeDialogState
             );
           }
         })
-        .onError((error, trace) {
+        .catchError((error) {
           Fluttertoast.showToast(
             msg: error.toString(),
             gravity: ToastGravity.TOP_RIGHT,
@@ -120,8 +121,20 @@ class _EmailConfirmationCodeDialogState
           .then((response) {
             if (response.data?['user'] != null) {
               var user = User.fromJson(response.data!['user']);
+              int? nextPageIndex = authDialogMap['create_username'];
+              int? currentPageIndex = authDialogMap['email_confirmation_code'];
+              List<int>? newHistory = state.history;
+
               frontOfficeState.setUser(user);
-              state.setActive(++state.active);
+
+              if (currentPageIndex != null) {
+                newHistory.remove(currentPageIndex);
+              }
+
+              state.updateState(
+                newActive: nextPageIndex,
+                newHistory: newHistory,
+              );
             }
           })
           .catchError((error) {

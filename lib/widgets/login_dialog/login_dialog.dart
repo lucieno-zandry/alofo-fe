@@ -6,6 +6,7 @@ import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
+import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:alofo/widgets/input/password_input.dart';
 import 'package:alofo/widgets/input/text_input.dart';
@@ -164,10 +165,16 @@ class _LoginDialogState extends State<LoginDialog> {
     }
 
     Future<Null> onRegisterSubmited() {
+      String nextPage = 'email_confirmation_code';
+
       return handleAuthentication(
         authenticate: () => register(form['email']!),
         onSuccess: () {
-          state.setActive(++state.active);
+          if (authDialogMap[nextPage] != null) {
+            state.setActive(authDialogMap[nextPage]!);
+          } else {
+            Navigator.of(context).pop();
+          }
         },
       );
     }
@@ -228,6 +235,20 @@ class _LoginDialogState extends State<LoginDialog> {
                 onChanged: onPasswordChanged,
                 label: "Password",
                 errorText: validationMessages?['password'],
+              ),
+            if (accountExists)
+              TextButton(
+                onPressed: () {
+                  int? passwordForgottenIndex =
+                      authDialogMap['password_forgotten'];
+
+                  if (passwordForgottenIndex == null) return;
+                  state.setActive(passwordForgottenIndex);
+                },
+                child: Text(
+                  'Did you forget your password?',
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
               ),
             SizedBox(
               width: constraints.maxWidth,

@@ -14,7 +14,7 @@ Map<String, Map<String, Color>> navbarTheme = {
 };
 
 List<NavLinkData> leftActions(BuildContext context) => [
-  NavLinkData(child: Text('PRODUITS'), href: '/products'),
+  NavLinkData(child: Text('PRODUCTS'), href: '/products'),
   NavLinkData(child: Text('WOMEN'), href: '/women'),
   NavLinkData(child: Text('MEN'), href: '/men'),
   NavLinkData(child: Text('ACCESSORIES'), href: '/accessories'),

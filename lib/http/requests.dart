@@ -1,4 +1,6 @@
 import 'package:alofo/http/app_http.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:get/state_manager.dart';
 
 Future<AppResponse> getEmailInfo(String email) {
   return AppHttp.post('/auth/email/info', {'email': email});
@@ -19,9 +21,16 @@ Future<AppResponse> register(String email) {
 }
 
 Future<AppResponse> updateUser(Map<String, dynamic> data) {
-  return AppHttp.post('/auth/user/update', data);
+  Map<String, String?> params = Get.parameters;
+  String? token = params['token'];
+
+  return AppHttp.post('/auth/user/update', {...data, 'token': token});
 }
 
 Future<AppResponse> sendConfirmationCode() {
   return AppHttp.get('/auth/email/confirm');
+}
+
+Future<AppResponse> sendPasswordResetLink(String email) {
+  return AppHttp.post('/auth/password/forgot', {'email': email});
 }

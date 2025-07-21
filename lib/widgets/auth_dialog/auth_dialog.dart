@@ -5,23 +5,22 @@ import 'package:alofo/widgets/create_username_dialog/create_username_dialog.dart
 import 'package:alofo/widgets/email_confirmation_code_dialog/email_confirmation_code_dialog.dart';
 import 'package:alofo/widgets/login_dialog/login_dialog.dart';
 import 'package:alofo/widgets/page_selector/page_selector.dart';
+import 'package:alofo/widgets/password_forgotten_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 const authDialogMap = {
   'login': 0,
-  'confirm_email': 1,
+  'email_confirmation_code': 1,
   'create_username': 2,
   'create_password': 3,
+  'password_forgotten': 4,
 };
 
 class AuthDialog extends StatelessWidget {
-  const AuthDialog({super.key, this.withDefault = 'login'});
+  const AuthDialog({super.key, this.defaultActive = 0});
 
-  final String withDefault;
-
-  int get defaultActive =>
-      authDialogMap[withDefault] != null ? authDialogMap[withDefault]! : 0;
+  final int defaultActive;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +48,7 @@ class AuthDialog extends StatelessWidget {
                   EmailConfirmationCodeDialog(),
                   CreateUsernameDialog(),
                   CreatePasswordDialog(),
+                  PasswordForgottenDialog(),
                 ],
               );
             },
@@ -62,10 +62,10 @@ class AuthDialog extends StatelessWidget {
               spacing: 10,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                if (state.active > 0)
+                if (state.history.length > 1)
                   TextButton(
                     onPressed: () {
-                      state.setActive(--state.active);
+                      state.previous();
                     },
                     child: Row(
                       spacing: 5,

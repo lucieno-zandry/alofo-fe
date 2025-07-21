@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:alofo/classes/local_storage.dart';
 import 'package:http/http.dart' as http;
 
-String apiUrl = "http://192.168.8.108:8000/api";
+String apiUrl = "http://localhost:8000/api";
 
 Future<Map<String, String>> getHeaders() async {
   var headers = {
