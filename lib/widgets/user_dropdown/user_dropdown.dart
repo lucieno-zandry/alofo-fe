@@ -1,6 +1,7 @@
 import 'package:alofo/classes/app_colors.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/avatar_name/avatar_name.dart';
+import 'package:alofo/widgets/logout_dialog/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,7 +16,6 @@ class UserDropdown extends StatelessWidget {
       builder: (frontOfficeState) {
         if (frontOfficeState.user != null) {
           return PopupMenuButton<String>(
-            // color: AppColors.dark(),
             icon: AvatarName(
               name: frontOfficeState.user!.name ?? 'Unknown',
               circleColor: AppColors.secondary(),
@@ -25,16 +25,21 @@ class UserDropdown extends StatelessWidget {
             ),
             itemBuilder:
                 (context) => [
-                  PopupMenuItem(value: 'profile', child: Text('Profile')),
-                  PopupMenuItem(value: 'logout', child: Text('Logout')),
+                  PopupMenuItem(
+                    child: Row(
+                      children: [Icon(Icons.settings), Text('Settings')],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => LogoutDialog(),
+                      );
+                    },
+                    child: Row(children: [Icon(Icons.logout), Text('Log out')]),
+                  ),
                 ],
-            onSelected: (value) {
-              if (value == 'profile') {
-                // Handle profile navigation
-              } else if (value == 'logout') {
-                // Handle logout
-              }
-            },
           );
         }
 

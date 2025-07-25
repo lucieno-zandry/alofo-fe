@@ -1,4 +1,5 @@
 import 'package:alofo/classes/app_colors.dart';
+import 'package:alofo/classes/pages_uris.dart';
 import 'package:alofo/classes/screen.dart';
 import 'package:alofo/widgets/auth_dialog_toggler/auth_dialog_toggler.dart';
 import 'package:alofo/widgets/navbar/navbar_xl.dart';
@@ -14,7 +15,7 @@ Map<String, Map<String, Color>> navbarTheme = {
 };
 
 List<NavLinkData> leftActions(BuildContext context) => [
-  NavLinkData(child: Text('PRODUCTS'), href: '/products'),
+  NavLinkData(child: Text('PRODUCTS'), href: PagesUris.productsPage),
   NavLinkData(child: Text('WOMEN'), href: '/women'),
   NavLinkData(child: Text('MEN'), href: '/men'),
   NavLinkData(child: Text('ACCESSORIES'), href: '/accessories'),

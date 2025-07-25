@@ -1,3 +1,4 @@
+import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,11 @@ class AuthDialogToggler extends StatelessWidget {
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (BuildContext context) => AuthDialog(),
+                builder:
+                    (BuildContext context) => AuthDialog(
+                      defaultActive: authDialogMap['login']!.index,
+                    ),
+                barrierDismissible: false,
               );
             },
             child: Row(

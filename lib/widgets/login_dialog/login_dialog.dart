@@ -1,12 +1,11 @@
+import 'package:alofo/classes/app_response.dart';
 import 'package:alofo/classes/local_storage.dart';
 import 'package:alofo/functions/debug.dart';
 import 'package:alofo/functions/get_validation_message.dart';
-import 'package:alofo/http/app_http.dart';
 import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
-import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:alofo/widgets/input/password_input.dart';
 import 'package:alofo/widgets/input/text_input.dart';
@@ -171,7 +170,7 @@ class _LoginDialogState extends State<LoginDialog> {
         authenticate: () => register(form['email']!),
         onSuccess: () {
           if (authDialogMap[nextPage] != null) {
-            state.setActive(authDialogMap[nextPage]!);
+            state.setActive(authDialogMap[nextPage]!.index);
           } else {
             Navigator.of(context).pop();
           }
@@ -240,7 +239,7 @@ class _LoginDialogState extends State<LoginDialog> {
               TextButton(
                 onPressed: () {
                   int? passwordForgottenIndex =
-                      authDialogMap['password_forgotten'];
+                      authDialogMap['password_forgotten']?.index;
 
                   if (passwordForgottenIndex == null) return;
                   state.setActive(passwordForgottenIndex);

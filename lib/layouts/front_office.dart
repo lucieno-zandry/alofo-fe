@@ -1,3 +1,8 @@
+import 'package:alofo/classes/local_storage.dart';
+import 'package:alofo/http/requests.dart';
+import 'package:alofo/models/models.dart';
+import 'package:alofo/states/app_http_state.dart';
+import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/navbar/navbar.dart';
@@ -16,31 +21,64 @@ class FrontOffice extends StatefulWidget {
 class _FrontOfficeState extends State<FrontOffice> {
   @override
   void initState() {
-    var params = Get.parameters;
-    var action = params['action'];
-    var type = params['type'];
+    super.initState();
 
-    if (action != null && type != null) {
-      if (type == 'auth') {
-        int? targetIndex = authDialogMap[action];
+    Get.put(FrontOfficeState());
+    Get.put(AppHttpState(context: context));
 
-        if (targetIndex != null) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AuthDialog(defaultActive: targetIndex);
-            },
-          );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      var params = Uri.base.queryParameters;
+      var action = params['action'];
+      var type = params['type'];
+
+      if (action != null && type != null) {
+        if (type == 'auth') {
+          int? targetIndex = authDialogMap[action]?.index;
+
+          if (targetIndex != null) {
+            Future.delayed(Duration(seconds: 2), () {
+              if (!context.mounted) return;
+
+              showDialog(
+                context: context,
+                builder:
+                    (BuildContext context) =>
+                        AuthDialog(defaultActive: targetIndex),
+              );
+            });
+          }
         }
       }
-    }
-    super.initState();
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LocalStorage.getItem<String>('authorization_token').then((token) {
+        if (token == null) return;
+        getAuthUser()
+            .then((response) {
+              if (response.data?['user'] != null) {
+                var state = Get.find<FrontOfficeState>();
+                var user = User.fromJson(response.data!['user']);
+                state.setUser(user);
+              }
+            })
+            .catchError((error) {
+              if (!context.mounted) return;
+
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return AuthDialog();
+                },
+              );
+            });
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    Get.put(FrontOfficeState());
-
     return Scaffold(
       endDrawer: NavbarDrawer(
         topActions: leftActions(context),

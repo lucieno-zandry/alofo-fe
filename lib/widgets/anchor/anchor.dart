@@ -4,9 +4,9 @@ import 'package:go_router/go_router.dart';
 class Anchor extends StatelessWidget {
   const Anchor({
     super.key,
+    required this.href,
     required this.child,
     this.onPressed,
-    required this.href,
   });
 
   final Widget child;

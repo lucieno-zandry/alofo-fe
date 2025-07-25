@@ -48,16 +48,19 @@ class Button extends StatelessWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           ),
         ),
-        child: isLoading
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(style.foregroundColor),
-                  strokeWidth: 2,
-                ),
-              )
-            : child,
+        child:
+            isLoading
+                ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      style.foregroundColor,
+                    ),
+                    strokeWidth: 2,
+                  ),
+                )
+                : child,
       ),
     );
   }
@@ -85,7 +88,15 @@ class Button extends StatelessWidget {
           hoverBackgroundColor: AppColors.light(),
           hoverForegroundColor: AppColors.dark(),
         );
-      case 'primary':
+
+      case 'danger':
+        return _ButtonStyleData(
+          backgroundColor: AppColors.danger(),
+          foregroundColor: AppColors.light(),
+          hoverBackgroundColor: AppColors.light(),
+          hoverForegroundColor: AppColors.danger(),
+        );
+
       default:
         return _ButtonStyleData(
           backgroundColor: AppColors.primary(),

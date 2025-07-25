@@ -7,10 +7,12 @@ models.Variant? findVariant(
   final activeIds = activeVariantOption.map((o) => o.id).toSet();
 
   for (final variant in variants) {
-    final variantIds = variant.variantOptions!.map((o) => o.id).toSet();
-    if (variantIds.length == activeIds.length &&
-        variantIds.containsAll(activeIds)) {
-      return variant;
+    if (variant.variantOptions != null) {
+      final variantIds = variant.variantOptions!.map((o) => o.id).toSet();
+      if (variantIds.length == activeIds.length &&
+          variantIds.containsAll(activeIds)) {
+        return variant;
+      }
     }
   }
 

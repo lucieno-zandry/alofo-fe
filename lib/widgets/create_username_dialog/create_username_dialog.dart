@@ -1,4 +1,3 @@
-import 'package:alofo/functions/debug.dart';
 import 'package:alofo/functions/get_validation_message.dart';
 import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
@@ -7,6 +6,7 @@ import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/button/button.dart';
 import 'package:alofo/widgets/input/text_input.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class CreateUsernameDialog extends StatefulWidget {
@@ -66,7 +66,7 @@ class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
                 errorText = error['message'];
               });
             } else {
-              debug(context, error);
+              Fluttertoast.showToast(msg: error.toString());
             }
           })
           .whenComplete(() {
