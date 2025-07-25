@@ -6,7 +6,7 @@ import 'package:alofo/states/app_http_state.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-String apiUrl = "http://192.168.8.101:8000/api";
+String apiUrl = "http://192.168.8.100:8000/api";
 
 class AppHttp {
   static Future<AppResponse> get(String uri) {

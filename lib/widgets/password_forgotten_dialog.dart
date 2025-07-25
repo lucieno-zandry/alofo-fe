@@ -37,7 +37,7 @@ class _PasswordForgottenDialogState extends State<PasswordForgottenDialog> {
             toastLength: Toast.LENGTH_LONG,
           );
 
-          if (context.mounted) Navigator.of(context).pop();
+          if (mounted) Navigator.of(context).pop();
           state.updateState(newActive: 0, newHistory: [0]);
         })
         .catchError((error) {

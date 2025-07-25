@@ -27,6 +27,8 @@ class _EmailConfirmationCodeDialogState
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   String? validationMessage;
   bool isLoading = false;
+  AuthDialogState state = Get.find<AuthDialogState>();
+  FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
 
   int _resendTimeout = 60;
   Timer? _timer;
@@ -104,54 +106,51 @@ class _EmailConfirmationCodeDialogState
     setState(() {});
   }
 
+  void onSubmit() {
+    setState(() {
+      isLoading = true;
+    });
+
+    final code = _controllers.map((c) => c.text).join();
+
+    matchConfirmationCode(code)
+        .then((response) {
+          if (response.data?['user'] != null) {
+            var user = User.fromJson(response.data!['user']);
+            frontOfficeState.setUser(user);
+
+            if (state.onSuccess != null) return state.onSuccess!();
+
+            int? nextPageIndex = authDialogMap['create_username']?.index;
+            int? currentPageIndex =
+                authDialogMap['email_confirmation_code']?.index;
+            List<int>? newHistory = state.history;
+
+            if (currentPageIndex != null) {
+              newHistory.remove(currentPageIndex);
+            }
+
+            state.updateState(newActive: nextPageIndex, newHistory: newHistory);
+          }
+        })
+        .catchError((error) {
+          if (error is Map) {
+            if (error['errors']?['code'] != null) {
+              setState(() {
+                validationMessage = error['errors']['code'][0];
+              });
+            }
+          }
+        })
+        .whenComplete(() {
+          setState(() {
+            isLoading = false;
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    AuthDialogState state = Get.find<AuthDialogState>();
-    FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
-
-    void onSubmit() {
-      setState(() {
-        isLoading = true;
-      });
-
-      final code = _controllers.map((c) => c.text).join();
-
-      matchConfirmationCode(code)
-          .then((response) {
-            if (response.data?['user'] != null) {
-              var user = User.fromJson(response.data!['user']);
-              int? nextPageIndex = authDialogMap['create_username']?.index;
-              int? currentPageIndex = authDialogMap['email_confirmation_code']?.index;
-              List<int>? newHistory = state.history;
-
-              frontOfficeState.setUser(user);
-
-              if (currentPageIndex != null) {
-                newHistory.remove(currentPageIndex);
-              }
-
-              state.updateState(
-                newActive: nextPageIndex,
-                newHistory: newHistory,
-              );
-            }
-          })
-          .catchError((error) {
-            if (error is Map) {
-              if (error['errors']?['code'] != null) {
-                setState(() {
-                  validationMessage = error['errors']['code'][0];
-                });
-              }
-            }
-          })
-          .whenComplete(() {
-            setState(() {
-              isLoading = false;
-            });
-          });
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       spacing: 15,

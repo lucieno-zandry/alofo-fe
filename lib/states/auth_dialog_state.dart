@@ -37,10 +37,11 @@ const authDialogMap = {
 };
 
 class AuthDialogState extends GetxController {
-  AuthDialogState({this.active = 0}) : history = [active];
+  AuthDialogState({this.active = 0, this.onSuccess}) : history = [active];
 
   int active;
   List<int> history;
+  Function()? onSuccess;
 
   setActive(int newActive) {
     history = [...history, newActive];

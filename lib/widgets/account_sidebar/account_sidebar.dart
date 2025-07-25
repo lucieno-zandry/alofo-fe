@@ -18,10 +18,10 @@ class AccountSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 10,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Account', style: Theme.of(context).textTheme.titleSmall),
+          Text('Account', style: Theme.of(context).textTheme.titleMedium),
           for (var accountSidebarMenuItem in accountSidebarMenuItems)
             Anchor(
               href: accountSidebarMenuItem.href,

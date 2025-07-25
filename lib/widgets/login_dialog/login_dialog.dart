@@ -1,6 +1,7 @@
 import 'package:alofo/classes/app_response.dart';
 import 'package:alofo/classes/local_storage.dart';
 import 'package:alofo/functions/debug.dart';
+import 'package:alofo/functions/get_updated_validation_messages.dart';
 import 'package:alofo/functions/get_validation_message.dart';
 import 'package:alofo/http/requests.dart';
 import 'package:alofo/models/models.dart';
@@ -37,34 +38,6 @@ class _LoginDialogState extends State<LoginDialog> {
 
   Map<String, String> form = defaultForm;
 
-  void updateValidationMessages({
-    required String name,
-    String? validationMessage,
-  }) {
-    setState(() {
-      if (validationMessages == null) {
-        if (validationMessage != null) {
-          validationMessages = {
-            ...defaultValidationMessages,
-            name: validationMessage,
-          };
-        }
-      } else {
-        var newValidationMessages = validationMessages;
-        newValidationMessages![name] = validationMessage;
-
-        bool newValidationMessagesisEmpty = newValidationMessages.entries.every(
-          (validation) {
-            return validation.value == null;
-          },
-        );
-
-        validationMessages =
-            newValidationMessagesisEmpty ? null : newValidationMessages;
-      }
-    });
-  }
-
   void updateForm({required String name, required String value}) {
     setState(() {
       form = {...form, name: value};
@@ -74,10 +47,14 @@ class _LoginDialogState extends State<LoginDialog> {
   void onPasswordChanged(String value) {
     String? validationMessage = getValidationMessage('user.password', value);
 
-    updateValidationMessages(
-      name: 'password',
-      validationMessage: validationMessage,
-    );
+    setState(() {
+      validationMessages = getUpdatedValidationMessages(
+        name: 'password',
+        validationMessage: validationMessage,
+        defaultValidationMessages: defaultValidationMessages,
+        validationMessages: validationMessages,
+      );
+    });
 
     updateForm(name: 'password', value: value);
   }
@@ -92,10 +69,14 @@ class _LoginDialogState extends State<LoginDialog> {
       }
     });
 
-    updateValidationMessages(
-      name: 'email',
-      validationMessage: validationMessage,
-    );
+    setState(() {
+      validationMessages = getUpdatedValidationMessages(
+        name: 'email',
+        validationMessage: validationMessage,
+        defaultValidationMessages: defaultValidationMessages,
+        validationMessages: validationMessages,
+      );
+    });
 
     updateForm(name: 'email', value: value);
   }
@@ -129,17 +110,25 @@ class _LoginDialogState extends State<LoginDialog> {
           .onError((error, trace) {
             if (error is Map && error['errors'] != null) {
               if (error['errors']?['email'] != null) {
-                updateValidationMessages(
-                  name: 'email',
-                  validationMessage: error['errors']!['email']![0],
-                );
+                setState(() {
+                  validationMessages = getUpdatedValidationMessages(
+                    name: 'email',
+                    validationMessage: error['errors']!['email']![0],
+                    defaultValidationMessages: defaultValidationMessages,
+                    validationMessages: validationMessages,
+                  );
+                });
               }
 
               if (error['errors']?['password'] != null) {
-                updateValidationMessages(
-                  name: 'password',
-                  validationMessage: error['errors']!['password']![0],
-                );
+                setState(() {
+                  validationMessages = getUpdatedValidationMessages(
+                    name: 'password',
+                    validationMessage: error['errors']!['password']![0],
+                    defaultValidationMessages: defaultValidationMessages,
+                    validationMessages: validationMessages,
+                  );
+                });
               }
             } else if (context.mounted) {
               debug(context, error);
@@ -194,11 +183,15 @@ class _LoginDialogState extends State<LoginDialog> {
           .onError((error, stackTrace) {
             if (error == null || error is! Map) return;
             if (error['message'] != null) {
-              updateValidationMessages(
-                name: 'email',
-                validationMessage: error['message'],
-              );
-            } else {
+              setState(() {
+                validationMessages = getUpdatedValidationMessages(
+                  name: 'email',
+                  validationMessage: error['message'],
+                  defaultValidationMessages: defaultValidationMessages,
+                  validationMessages: validationMessages,
+                );
+              });
+            } else if (context.mounted) {
               debug(context, error);
             }
           })

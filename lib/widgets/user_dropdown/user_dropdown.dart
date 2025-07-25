@@ -1,9 +1,11 @@
 import 'package:alofo/classes/app_colors.dart';
+import 'package:alofo/classes/pages_uris.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/avatar_name/avatar_name.dart';
 import 'package:alofo/widgets/logout_dialog/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 
 class UserDropdown extends StatelessWidget {
   const UserDropdown({super.key});
@@ -26,9 +28,10 @@ class UserDropdown extends StatelessWidget {
             itemBuilder:
                 (context) => [
                   PopupMenuItem(
-                    child: Row(
-                      children: [Icon(Icons.settings), Text('Settings')],
-                    ),
+                    onTap: () {
+                      context.go(PagesUris.settingsPage);
+                    },
+                    child: Row(children: [Icon(Icons.person), Text('Account')]),
                   ),
                   PopupMenuItem(
                     onTap: () {

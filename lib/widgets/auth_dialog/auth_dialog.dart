@@ -6,9 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AuthDialog extends StatefulWidget {
-  const AuthDialog({super.key, this.defaultActive = 0});
+  const AuthDialog({
+    super.key,
+    this.defaultActive = 0,
+    this.onSuccess,
+  });
 
   final int defaultActive;
+  final Function()? onSuccess;
 
   @override
   State<AuthDialog> createState() => _AuthDialogState();
@@ -17,8 +22,19 @@ class AuthDialog extends StatefulWidget {
 class _AuthDialogState extends State<AuthDialog> {
   @override
   void initState() {
-    Get.put(AuthDialogState(active: widget.defaultActive));
+    Get.put(
+      AuthDialogState(
+        active: widget.defaultActive,
+        onSuccess: widget.onSuccess,
+      ),
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    Get.delete<AuthDialogState>();
+    super.dispose();
   }
 
   @override
@@ -26,7 +42,7 @@ class _AuthDialogState extends State<AuthDialog> {
     double screenWidth = MediaQuery.of(context).size.width;
     var authDialogList = authDialogMap.values;
 
-      return AlertDialog(
+    return AlertDialog(
       title: Text('Login / Register', textAlign: TextAlign.center),
       shape: Border.all(style: BorderStyle.none),
 

@@ -37,8 +37,7 @@ class _FrontOfficeState extends State<FrontOffice> {
 
           if (targetIndex != null) {
             Future.delayed(Duration(seconds: 2), () {
-              if (!context.mounted) return;
-
+              if (!mounted) return;
               showDialog(
                 context: context,
                 builder:
@@ -63,8 +62,7 @@ class _FrontOfficeState extends State<FrontOffice> {
               }
             })
             .catchError((error) {
-              if (!context.mounted) return;
-
+              if (!mounted) return;
               showDialog(
                 context: context,
                 barrierDismissible: false,
