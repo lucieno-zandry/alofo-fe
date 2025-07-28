@@ -43,7 +43,7 @@ class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
     AuthDialogState state = Get.find<AuthDialogState>();
     FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
 
-    void onSubmited() {
+    void onSubmitted() {
       if (!isValid || frontOfficeState.user == null) return;
       var user = frontOfficeState.user!;
       user.name = controller.text;
@@ -91,7 +91,7 @@ class _CreateUsernameDialogState extends State<CreateUsernameDialog> {
           controller: controller,
         ),
         Button(
-          onPressed: isValid ? onSubmited : null,
+          onPressed: isValid ? onSubmitted : null,
           isLoading: isLoading,
           child: Text('CONTINUE'),
         ),

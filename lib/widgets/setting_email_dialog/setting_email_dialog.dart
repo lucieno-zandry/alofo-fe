@@ -27,7 +27,7 @@ class SettingEmailDialog extends StatefulWidget {
 class _SettingEmailDialogState extends State<SettingEmailDialog> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  Map<String, String?>? validationMessages = defaultValidationMessages;
+  Map<String, String?>? validationMessages = {...defaultValidationMessages};
   FrontOfficeState frontOfficeState = Get.find<FrontOfficeState>();
   bool isLoading = false;
 
@@ -69,7 +69,7 @@ class _SettingEmailDialogState extends State<SettingEmailDialog> {
     });
   }
 
-  void onSubmited() {
+  void onSubmitted() {
     if (!isValid) return;
     setState(() {
       isLoading = true;
@@ -161,7 +161,7 @@ class _SettingEmailDialogState extends State<SettingEmailDialog> {
           errorText: validationMessages?['password'],
         ),
         Button(
-          onPressed: isValid ? onSubmited : null,
+          onPressed: isValid ? onSubmitted : null,
           isLoading: isLoading,
           child: Text('Change Email'),
         ),

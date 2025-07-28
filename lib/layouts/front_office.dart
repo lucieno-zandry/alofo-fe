@@ -22,35 +22,13 @@ class _FrontOfficeState extends State<FrontOffice> {
   @override
   void initState() {
     super.initState();
+    bool aPopUpIsActive = false;
 
     Get.put(FrontOfficeState());
     Get.put(AppHttpState(context: context));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      var params = Uri.base.queryParameters;
-      var action = params['action'];
-      var type = params['type'];
-
-      if (action != null && type != null) {
-        if (type == 'auth') {
-          int? targetIndex = authDialogMap[action]?.index;
-
-          if (targetIndex != null) {
-            Future.delayed(Duration(seconds: 2), () {
-              if (!mounted) return;
-              showDialog(
-                context: context,
-                builder:
-                    (BuildContext context) =>
-                        AuthDialog(defaultActive: targetIndex),
-              );
-            });
-          }
-        }
-      }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Handle authentication
       LocalStorage.getItem<String>('authorization_token').then((token) {
         if (token == null) return;
         getAuthUser()
@@ -72,6 +50,52 @@ class _FrontOfficeState extends State<FrontOffice> {
               );
             });
       });
+
+      // Handle Password Reset
+      var params = Uri.base.queryParameters;
+      var action = params['action'];
+      var type = params['type'];
+
+      if (action != null && type != null) {
+        if (type == 'auth') {
+          int? targetIndex = authDialogMap[action]?.index;
+
+          if (targetIndex != null) {
+            aPopUpIsActive = true;
+            Future.delayed(Duration(seconds: 2), () {
+              if (!mounted) return;
+              showDialog(
+                context: context,
+                builder:
+                    (BuildContext context) =>
+                        AuthDialog(defaultActive: targetIndex),
+              );
+            });
+          }
+        }
+      }
+
+      if (!aPopUpIsActive) {
+        // Handle client code
+        LocalStorage.getItem<String>('client_code').then((clientCode) {
+          if (clientCode == null) {
+            int? defaultActiveIndex =
+                authDialogMap['insert_client_code']?.index;
+            if (defaultActiveIndex == null) return;
+
+            Future.delayed(Duration(seconds: 2), () {
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  builder:
+                      (BuildContext context) =>
+                          AuthDialog(defaultActive: defaultActiveIndex),
+                );
+              }
+            });
+          }
+        });
+      }
     });
   }
 

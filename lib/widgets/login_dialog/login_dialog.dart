@@ -28,7 +28,7 @@ class LoginDialog extends StatefulWidget {
 }
 
 class _LoginDialogState extends State<LoginDialog> {
-  Map<String, String?>? validationMessages = defaultValidationMessages;
+  Map<String, String?>? validationMessages = {...defaultValidationMessages};
 
   bool accountExists = false;
 
@@ -65,7 +65,7 @@ class _LoginDialogState extends State<LoginDialog> {
     setState(() {
       accountExists = false;
       if (validationMessages?['password'] != null) {
-        validationMessages = defaultValidationMessages;
+        validationMessages = {...defaultValidationMessages};
       }
     });
 
@@ -202,10 +202,10 @@ class _LoginDialogState extends State<LoginDialog> {
           });
     }
 
-    void onSubmited() {
+    void onSubmitted() {
       setState(() {
         isLoading = true;
-        validationMessages = defaultValidationMessages;
+        validationMessages = {...defaultValidationMessages};
       });
 
       accountExists ? onLoginSubmited() : onCheckEmailSubmited();
@@ -245,7 +245,7 @@ class _LoginDialogState extends State<LoginDialog> {
             SizedBox(
               width: constraints.maxWidth,
               child: Button(
-                onPressed: buttonIsDisabled ? null : onSubmited,
+                onPressed: buttonIsDisabled ? null : onSubmitted,
                 variant: 'primary',
                 isLoading: isLoading,
                 child: Text('CONTINUE'),

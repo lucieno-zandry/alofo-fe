@@ -8,22 +8,25 @@ String? getValidationMessage(
 
   switch (name) {
     case "user.name":
-      regexPattern = RegExp(r'^[a-zéèâàäöïîôòìëêûüùç]{2,20}$', caseSensitive: false);
+      regexPattern = RegExp(
+        r'^[a-zéèâàäöïîôòìëêûüùç]{2,20}$',
+        caseSensitive: false,
+      );
       if (value.isEmpty) {
-        message = "The name field is required";
+        message = "The name field is required.";
       } else if (value.length < 2) {
-        message = "The name should contain at least 2 characters";
+        message = "The name should contain at least 2 characters.";
       } else if (!regexPattern.hasMatch(value)) {
-        message = "The name should contain only alphabetic characters";
+        message = "The name should contain only alphabetic characters.";
       }
       break;
 
     case "user.email":
       regexPattern = RegExp(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
       if (value.isEmpty) {
-        message = "The email adress is required";
+        message = "The email adress is required.";
       } else if (!regexPattern.hasMatch(value)) {
-        message = "This email format is invalid";
+        message = "This email format is invalid.";
       }
       break;
 
@@ -31,13 +34,22 @@ String? getValidationMessage(
       if (value.isEmpty) {
         message = "The password is required";
       } else if (value.length < 6) {
-        message = "The password length should be at least 6 caracters";
+        message = "The password length should be at least 6 caracters.";
       }
       break;
 
     case "user.password_confirmation":
       if (data["user.password"] != value) {
-        message = "The passwords don't match";
+        message = "The passwords don't match.";
+      }
+      break;
+
+    case "client_code.code":
+      regexPattern = RegExp(r'^[a-zA-Z0-9]{6}$', caseSensitive: false);
+      if (value.length != 6) {
+        message = "The client code should be made of exactly 6 characters.";
+      } else if (!regexPattern.hasMatch(value)) {
+        message = "The client code contains only alpha-numeric characters.";
       }
       break;
 

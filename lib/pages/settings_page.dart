@@ -1,6 +1,7 @@
 import 'package:alofo/classes/setting_row.dart';
 import 'package:alofo/states/front_office_state.dart';
 import 'package:alofo/widgets/setting_email_dialog/setting_email_dialog.dart';
+import 'package:alofo/widgets/setting_name_dialog.dart';
 import 'package:alofo/widgets/setting_password_dialog/setting_password_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,12 @@ class SettingsPage extends StatelessWidget {
                 title: 'Password',
                 dialogTitle: 'Change your password',
                 dialogContent: SettingPasswordDialog(),
+              ),
+              SettingRow(
+                title: 'Name',
+                dialogTitle: 'Change your name',
+                value: state.user?.name,
+                dialogContent: SettingNameDialog(),
               ),
             ],
           ),

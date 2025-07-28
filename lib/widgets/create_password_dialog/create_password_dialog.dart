@@ -123,7 +123,7 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
       });
     }
 
-    void onSubmited() {
+    void onSubmitted() {
       if (!isValid) return;
 
       String? token = Uri.base.queryParameters['token'];
@@ -159,7 +159,7 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
           controller: passwordConfirmController,
         ),
         Button(
-          onPressed: isValid ? onSubmited : null,
+          onPressed: isValid ? onSubmitted : null,
           isLoading: isLoading,
           child: Text('Continue'),
         ),

@@ -23,7 +23,7 @@ class _PasswordForgottenDialogState extends State<PasswordForgottenDialog> {
 
   bool get isValid => errorText == null && emailController.text != '';
 
-  onSubmited() {
+  onSubmitted() {
     if (errorText != null) return;
     setState(() {
       isLoading = true;
@@ -78,7 +78,7 @@ class _PasswordForgottenDialogState extends State<PasswordForgottenDialog> {
         ),
         Button(
           variant: 'primary',
-          onPressed: isValid ? onSubmited : null,
+          onPressed: isValid ? onSubmitted : null,
           isLoading: isLoading,
           child: Text('Get Link'),
         ),
