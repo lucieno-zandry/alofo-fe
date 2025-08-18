@@ -1,6 +1,8 @@
-import 'package:alofo/widgets/nav_link.dart';
+import 'package:alofo/states/navbar_state.dart';
 import 'package:alofo/types/nav_link_data.dart';
+import 'package:alofo/widgets/nav_link.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NavbarDrawer extends StatelessWidget {
   const NavbarDrawer({
@@ -14,22 +16,38 @@ class NavbarDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 50),
-        child: ListView(
-          children: [
-            Column(
+    return GetBuilder<NavbarState>(
+      builder: (navbarState) {
+        return Drawer(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 50),
+            child: ListView(
               children: [
-                for (NavLinkData navLinkData in topActions)
-                  NavLink(navLinkData: navLinkData),
-                SizedBox(height: 50),
-                for (Widget navLink in bottomActions) navLink,
+                Column(
+                  children: [
+                    if (navbarState.categories != null)
+                      Column(
+                        spacing: 10,
+                        children: [
+                          for (var category in navbarState.categories!)
+                            NavLink(
+                              href: '/products/${category.id}',
+                              child: Text(category.title!),
+                            ),
+                        ],
+                      ),
+                    SizedBox(height: 50),
+                    Column(
+                      spacing: 10,
+                      children: [for (Widget navLink in bottomActions) navLink],
+                    ),
+                  ],
+                ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

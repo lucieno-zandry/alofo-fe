@@ -55,14 +55,8 @@ class Navbar extends StatelessWidget {
           builder: (context) {
             return Screen.responsive<Widget>(
               width: MediaQuery.of(context).size.width,
-              standard: NavbarXs(
-                leftActions: leftActions(context),
-                rightActions: rightActions(context),
-              ),
-              lg: NavbarXl(
-                leftActions: leftActions(context),
-                rightActions: rightActions(context),
-              ),
+              standard: NavbarXs(rightActions: rightActions(context)),
+              lg: NavbarXl(rightActions: rightActions(context)),
             );
           },
         ),

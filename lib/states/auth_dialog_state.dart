@@ -8,31 +8,41 @@ import 'package:alofo/widgets/password_forgotten_dialog.dart';
 import 'package:get/get.dart';
 
 const authDialogMap = {
-  'login': AuthDialogItem(isMandatory: false, widget: LoginDialog(), index: 0),
+  'login': AuthDialogItem(
+    isMandatory: false,
+    widget: LoginDialog(),
+    index: 0,
+    title: 'Log in / Register',
+  ),
   'email_confirmation_code': AuthDialogItem(
     isMandatory: true,
     widget: EmailConfirmationCodeDialog(),
     index: 1,
+    title: 'Are you a robot?',
   ),
   'create_username': AuthDialogItem(
     isMandatory: true,
     widget: CreateUsernameDialog(),
     index: 2,
+    title: 'Who are you?',
   ),
   'create_password': AuthDialogItem(
     isMandatory: true,
     widget: CreatePasswordDialog(),
     index: 3,
+    title: "Let us remember you!",
   ),
   'password_forgotten': AuthDialogItem(
     isMandatory: false,
     widget: PasswordForgottenDialog(),
     index: 4,
+    title: "Password forgotten!",
   ),
   'insert_client_code': AuthDialogItem(
     isMandatory: false,
     widget: InsertClientCodeDialog(),
     index: 5,
+    title: 'Do you have the pass?',
   ),
 };
 

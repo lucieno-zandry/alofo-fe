@@ -20,11 +20,11 @@ class CreatePasswordDialog extends StatefulWidget {
 class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
   String? errorText;
   final controller = TextEditingController();
-  final passwordConfirmController = TextEditingController();
+  final passwordConfirmationController = TextEditingController();
 
   bool get isValid =>
       controller.text != '' &&
-      passwordConfirmController.text != '' &&
+      passwordConfirmationController.text != '' &&
       errorText == null;
 
   @override
@@ -88,7 +88,7 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
       return resetPassword(
         password: controller.text,
         token: Uri.base.queryParameters['token']!,
-        passwordConfirmation: passwordConfirmController.text,
+        passwordConfirmation: passwordConfirmationController.text,
       ).then((response) {
         if (response.data?['token'] != null && response.data?['auth'] != null) {
           LocalStorage.saveItem('authorization_token', response.data!['token']);
@@ -109,16 +109,21 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
     }
 
     Future<Null> onPasswordCreated() {
-      return updateUser({'password': controller.text}).then((response) {
-        if (response.data?['user'] != null) {
-          var newUser = User.fromJson(response.data!['user']);
-          frontOfficeState.setUser(newUser);
+      return updateUser({
+        'password': controller.text,
+        'password_confirmation': passwordConfirmationController.text,
+        'current_password': '000000',
+      }).then((response) async {
+        String? clientCode = await LocalStorage.getItem<String>('client_code');
 
+        if (clientCode == null || clientCode == 'empty') {
           int? nextIndex = authDialogMap['insert_client_code']?.index;
 
           if (nextIndex != null) {
             authDialogState.setActive(nextIndex);
           }
+        } else if (context.mounted) {
+          Navigator.of(context).pop();
         }
       });
     }
@@ -156,7 +161,7 @@ class _CreatePasswordDialogState extends State<CreatePasswordDialog> {
         PasswordInput(
           onChanged: onPasswordConfirmChanged,
           label: 'Confirm password',
-          controller: passwordConfirmController,
+          controller: passwordConfirmationController,
         ),
         Button(
           onPressed: isValid ? onSubmitted : null,

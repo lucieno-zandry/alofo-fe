@@ -3,7 +3,7 @@ import 'package:alofo/models/product.dart';
 import 'package:alofo/models/promotion.dart';
 import 'package:alofo/models/variant_option.dart';
 
-class Variant {
+class Variant extends Model {
   int? id;
   int? productId;
   String? sku;
@@ -48,10 +48,10 @@ class Variant {
     );
 
     return Variant(
-      id: json['id'] as int,
-      image: json['image'] as String,
-      price: json['price'] as double,
-      productId: json['productId'] as int,
+      id: json['id'],
+      image: json['image'],
+      price: json['price'],
+      productId: json['product_id'],
       createdAt:
           json['created_at'] != null
               ? DateTime.parse(json['created_at'])
@@ -60,21 +60,22 @@ class Variant {
           json['updated_at'] != null
               ? DateTime.parse(json['updated_at'])
               : null,
-      sku: json['sku'] as String,
-      specialPrice: json['specialPrice'] as double,
-      stock: json['stock'] as int,
+      sku: json['sku'],
+      specialPrice: json['special_price'],
+      stock: json['stock'],
       product: product,
       variantOptions: variantOptions,
       promotions: promotions,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "image": image,
       "price": price,
-      "productId": productId,
+      "product_id": productId,
       "sku": sku,
       "special_price": specialPrice,
       "stock": stock,

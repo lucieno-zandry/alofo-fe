@@ -1,11 +1,11 @@
 import 'package:alofo/classes/pages_uris.dart';
-import 'package:alofo/layouts/account.dart';
+import 'package:alofo/layouts/settings.dart';
 import 'package:alofo/layouts/front_office.dart';
 import 'package:alofo/pages/addresses_page.dart';
 import 'package:alofo/pages/home_page.dart';
 import 'package:alofo/pages/product_page.dart';
 import 'package:alofo/pages/products_page.dart';
-import 'package:alofo/pages/settings_page.dart';
+import 'package:alofo/pages/account_settings_page.dart';
 import 'package:go_router/go_router.dart';
 
 var router = GoRouter(
@@ -19,25 +19,27 @@ var router = GoRouter(
         ),
         GoRoute(
           path: PagesUris.productPage,
-          builder: (context, state) => ProductPage(),
+          builder:
+              (context, state) =>
+                  ProductPage(productId: state.pathParameters['id']!),
         ),
         GoRoute(
           path: PagesUris.productsPage,
-          builder: (context, state) => ProductsPage(),
+          builder:
+              (context, state) =>
+                  ProductsPage(categoryId: state.pathParameters['id']!),
         ),
         ShellRoute(
-          // nested layout under FrontOffice
-          builder: (context, state, child) => Account(child: child),
+          builder: (context, state, child) => Settings(child: child),
           routes: [
             GoRoute(
               path: PagesUris.settingsPage,
-              builder: (context, state) => SettingsPage(),
+              builder: (context, state) => AccountSettingsPage(),
             ),
             GoRoute(
-              path: PagesUris.addressesPage,
+              path: PagesUris.addressesSettings,
               builder: (context, state) => AddressesPage(),
             ),
-            // Add more account-related routes here
           ],
         ),
       ],

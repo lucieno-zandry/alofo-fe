@@ -16,9 +16,8 @@ import 'package:get/get.dart';
 Map<String, String?> defaultValidationMessages = {
   'email': null,
   'password': null,
+  'client_code': null,
 };
-
-Map<String, String> defaultForm = {'email': '', 'password': ''};
 
 class LoginDialog extends StatefulWidget {
   const LoginDialog({super.key});
@@ -29,6 +28,9 @@ class LoginDialog extends StatefulWidget {
 
 class _LoginDialogState extends State<LoginDialog> {
   Map<String, String?>? validationMessages = {...defaultValidationMessages};
+  TextEditingController clientCodeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   bool accountExists = false;
 
@@ -36,12 +38,16 @@ class _LoginDialogState extends State<LoginDialog> {
 
   bool isLoading = false;
 
-  Map<String, String> form = defaultForm;
+  bool clientCodeFieldIsVisible = false;
 
-  void updateForm({required String name, required String value}) {
-    setState(() {
-      form = {...form, name: value};
+  @override
+  void initState() {
+    LocalStorage.getItem<String>('client_code').then((clientCode) {
+      if (clientCode == null) return;
+      clientCodeController.text = clientCode;
     });
+
+    super.initState();
   }
 
   void onPasswordChanged(String value) {
@@ -55,8 +61,6 @@ class _LoginDialogState extends State<LoginDialog> {
         validationMessages: validationMessages,
       );
     });
-
-    updateForm(name: 'password', value: value);
   }
 
   void onEmailChanged(String value) {
@@ -77,8 +81,6 @@ class _LoginDialogState extends State<LoginDialog> {
         validationMessages: validationMessages,
       );
     });
-
-    updateForm(name: 'email', value: value);
   }
 
   @override
@@ -91,16 +93,25 @@ class _LoginDialogState extends State<LoginDialog> {
       void Function()? onSuccess,
     }) {
       return authenticate()
-          .then((response) async {
+          .then((response) {
             if (response.data?['auth'] != null &&
                 response.data?['token'] != null) {
               User user = User.fromJson(response.data!['auth']);
               frontOfficeState.setUser(user);
 
-              await LocalStorage.saveItem(
+              LocalStorage.saveItem(
                 'authorization_token',
                 response.data!['token'],
               );
+
+              LocalStorage.getItem<String>('client_code').then((clientCode) {
+                if (clientCode != "empty") {
+                  LocalStorage.saveItem(
+                    'client_code',
+                    user.clientCodeId.toString(),
+                  );
+                }
+              });
 
               if (onSuccess != null) {
                 onSuccess();
@@ -130,6 +141,21 @@ class _LoginDialogState extends State<LoginDialog> {
                   );
                 });
               }
+
+              if (error['errors']?['client_code'] != null) {
+                setState(() {
+                  validationMessages = getUpdatedValidationMessages(
+                    name: 'client_code',
+                    validationMessage: error['errors']!['client_code']![0],
+                    defaultValidationMessages: defaultValidationMessages,
+                    validationMessages: validationMessages,
+                  );
+
+                  if (!clientCodeFieldIsVisible) {
+                    clientCodeFieldIsVisible = true;
+                  }
+                });
+              }
             } else if (context.mounted) {
               debug(context, error);
             }
@@ -143,7 +169,8 @@ class _LoginDialogState extends State<LoginDialog> {
 
     Future<Null> onLoginSubmited() {
       return handleAuthentication(
-        authenticate: () => logIn(form['email']!, form['password']!),
+        authenticate:
+            () => logIn(emailController.text, passwordController.text),
         onSuccess: () {
           if (context.mounted) {
             Navigator.of(context).pop();
@@ -152,11 +179,18 @@ class _LoginDialogState extends State<LoginDialog> {
       );
     }
 
-    Future<Null> onRegisterSubmited() {
+    Future<Null> onRegisterSubmited() async {
       String nextPage = 'email_confirmation_code';
 
+      var data = {'email': emailController.text, 'name': 'New User'};
+      String? clientCode = await LocalStorage.getItem<String>('client_code');
+
+      if (clientCode != null) {
+        data['client_code'] = clientCode;
+      }
+
       return handleAuthentication(
-        authenticate: () => register(form['email']!),
+        authenticate: () => register(data),
         onSuccess: () {
           if (authDialogMap[nextPage] != null) {
             state.setActive(authDialogMap[nextPage]!.index);
@@ -168,7 +202,7 @@ class _LoginDialogState extends State<LoginDialog> {
     }
 
     void onCheckEmailSubmited() {
-      getEmailInfo(form['email']!)
+      getEmailInfo(emailController.text)
           .then((response) async {
             if (response.data != null &&
                 response.data!['is_taken'] != null &&
@@ -202,6 +236,22 @@ class _LoginDialogState extends State<LoginDialog> {
           });
     }
 
+    void onClientCodeChanged(String value) {
+      String? validationMessage = getValidationMessage(
+        'client_code.code',
+        value,
+      );
+
+      setState(() {
+        validationMessages = getUpdatedValidationMessages(
+          name: 'client_code',
+          validationMessages: validationMessages,
+          defaultValidationMessages: defaultValidationMessages,
+          validationMessage: validationMessage,
+        );
+      });
+    }
+
     void onSubmitted() {
       setState(() {
         isLoading = true;
@@ -221,12 +271,14 @@ class _LoginDialogState extends State<LoginDialog> {
               onChanged: onEmailChanged,
               label: "Email",
               errorText: validationMessages?['email'],
+              controller: emailController,
             ),
             if (accountExists)
               PasswordInput(
                 onChanged: onPasswordChanged,
                 label: "Password",
                 errorText: validationMessages?['password'],
+                controller: passwordController,
               ),
             if (accountExists)
               TextButton(
@@ -241,6 +293,13 @@ class _LoginDialogState extends State<LoginDialog> {
                   'Did you forget your password?',
                   style: TextStyle(decoration: TextDecoration.underline),
                 ),
+              ),
+            if (clientCodeFieldIsVisible)
+              TextInput(
+                onChanged: onClientCodeChanged,
+                label: 'Client code',
+                controller: clientCodeController,
+                errorText: validationMessages?['client_code'],
               ),
             SizedBox(
               width: constraints.maxWidth,

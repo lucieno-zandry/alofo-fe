@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 List<AccountSidebarMenuItem> accountSidebarMenuItems = [
   AccountSidebarMenuItem(href: PagesUris.settingsPage, name: 'Settings'),
   AccountSidebarMenuItem(
-    href: PagesUris.addressesPage,
+    href: PagesUris.addressesSettings,
     name: 'Shipping Address',
   ),
 ];

@@ -13,10 +13,8 @@ Future<AppResponse> logIn(String email, String password) {
   return AppHttp.post('/auth/login', {'email': email, 'password': password});
 }
 
-Future<AppResponse> register(String email) {
-  String name = 'New User';
-
-  return AppHttp.post('/auth/register', {'email': email, 'name': name});
+Future<AppResponse> register(Map<String, dynamic> data) {
+  return AppHttp.post('/auth/register', data);
 }
 
 Future<AppResponse> resetPassword({
@@ -45,4 +43,28 @@ Future<AppResponse> sendPasswordResetLink(String email) {
 
 Future<AppResponse> getAuthUser() {
   return AppHttp.get('/auth/user/get');
+}
+
+Future<AppResponse> checkClientCodeUsability(String clientCode) {
+  return AppHttp.post('/client-code/check_usability', {
+    'client_code': clientCode,
+  });
+}
+
+Future<AppResponse> getCategoriesHierarchy() {
+  return AppHttp.get('/category/hierarchy');
+}
+
+Future<AppResponse> getCategoryProducts(categoryId) {
+  return AppHttp.get('/product/all?where=category_id=$categoryId');
+}
+
+Future<AppResponse> showCategory(String categoryId) {
+  return AppHttp.get('/category/$categoryId/?with=products');
+}
+
+Future<AppResponse> showProduct(String productId) {
+  return AppHttp.get(
+    '/product/get/$productId?with=category,images',
+  );
 }

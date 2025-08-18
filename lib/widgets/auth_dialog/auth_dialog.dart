@@ -6,11 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AuthDialog extends StatefulWidget {
-  const AuthDialog({
-    super.key,
-    this.defaultActive = 0,
-    this.onSuccess,
-  });
+  const AuthDialog({super.key, this.defaultActive = 0, this.onSuccess});
 
   final int defaultActive;
   final Function()? onSuccess;
@@ -40,43 +36,39 @@ class _AuthDialogState extends State<AuthDialog> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    var authDialogList = authDialogMap.values;
+    Iterable<AuthDialogItem> authDialogList = authDialogMap.values;
 
-    return AlertDialog(
-      title: Text('Login / Register', textAlign: TextAlign.center),
-      shape: Border.all(style: BorderStyle.none),
+    return GetBuilder<AuthDialogState>(
+      builder: (state) {
+        AuthDialogItem currentAuthDialogItem = authDialogList.firstWhere(
+          (authDialogItem) => authDialogItem.index == state.active,
+        );
 
-      content: SingleChildScrollView(
-        child: SizedBox(
-          width: Screen.responsive(
-            width: screenWidth,
-            standard: Screen.clamp(
-              200,
-              Screen.percentageOf(screenWidth, 50),
-              400,
-            ),
-          ),
-          child: GetBuilder<AuthDialogState>(
-            builder: (state) {
-              return PageSelector(
+        return AlertDialog(
+          title: Text(currentAuthDialogItem.title, textAlign: TextAlign.center),
+          shape: Border.all(style: BorderStyle.none),
+
+          content: SingleChildScrollView(
+            child: SizedBox(
+              width: Screen.responsive(
+                width: screenWidth,
+                standard: Screen.clamp(
+                  200,
+                  Screen.percentageOf(screenWidth, 50),
+                  400,
+                ),
+              ),
+              child: PageSelector(
                 active: state.active,
                 children:
                     authDialogList
                         .map((authDialogItem) => authDialogItem.widget)
                         .toList(),
-              );
-            },
+              ),
+            ),
           ),
-        ),
-      ),
-      actions: [
-        GetBuilder<AuthDialogState>(
-          builder: (state) {
-            AuthDialogItem currentAuthDialogItem = authDialogList.firstWhere(
-              (authDialogItem) => authDialogItem.index == state.active,
-            );
-
-            return Row(
+          actions: [
+            Row(
               spacing: 10,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -96,10 +88,10 @@ class _AuthDialogState extends State<AuthDialog> {
                     child: Text('Close'),
                   ),
               ],
-            );
-          },
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

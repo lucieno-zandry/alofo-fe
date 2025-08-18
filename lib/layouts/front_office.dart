@@ -4,6 +4,7 @@ import 'package:alofo/models/models.dart';
 import 'package:alofo/states/app_http_state.dart';
 import 'package:alofo/states/auth_dialog_state.dart';
 import 'package:alofo/states/front_office_state.dart';
+import 'package:alofo/states/navbar_state.dart';
 import 'package:alofo/widgets/auth_dialog/auth_dialog.dart';
 import 'package:alofo/widgets/navbar/navbar.dart';
 import 'package:alofo/widgets/navbar_drawer/navbar_drawer.dart';
@@ -24,8 +25,9 @@ class _FrontOfficeState extends State<FrontOffice> {
     super.initState();
     bool aPopUpIsActive = false;
 
-    Get.put(FrontOfficeState());
+    Get.put(FrontOfficeState(context: context));
     Get.put(AppHttpState(context: context));
+    Get.put(NavbarState());
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Handle authentication
@@ -36,6 +38,16 @@ class _FrontOfficeState extends State<FrontOffice> {
               if (response.data?['user'] != null) {
                 var state = Get.find<FrontOfficeState>();
                 var user = User.fromJson(response.data!['user']);
+
+                LocalStorage.getItem<String>('client_code').then((clientCode) {
+                  if (clientCode != "empty") {
+                    LocalStorage.saveItem(
+                      'client_code',
+                      user.clientCodeId.toString(),
+                    );
+                  }
+                });
+
                 state.setUser(user);
               }
             })

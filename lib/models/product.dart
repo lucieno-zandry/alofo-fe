@@ -33,14 +33,14 @@ class Product {
   static Product fromJson(Map<String, dynamic> json) {
     Category? category =
         json['category'] != null ? Category.fromJson(json['category']) : null;
+
     List<Variant>? variants = Model.fromJsonList(
       json['variants'],
       Variant.fromJson,
     );
-    List<Image>? images = Model.fromJsonList(
-      json['images'],
-      Image.fromJson,
-    );
+
+    List<Image>? images = Model.fromJsonList(json['images'], Image.fromJson);
+
     List<VariantGroup>? variantGroups = Model.fromJsonList(
       json['variant_groups'],
       VariantGroup.fromJson,
@@ -49,7 +49,7 @@ class Product {
     return Product(
       id: json['id'] as int?,
       title: json['title'] as String?,
-      categoryId: json['categoryId'] as int?,
+      categoryId: json['category_id'] as int?,
       description: json['description'] as String?,
       createdAt:
           json['created_at'] != null
@@ -74,6 +74,9 @@ class Product {
       "category_id": categoryId,
       "created_at": createdAt,
       "updated_at": updatedAt,
+      "category": category?.toJson(),
+      "variants": Model.toJsonList(variants),
+      "variant_groups": Model.toJsonList(variantGroups),
     };
   }
 }

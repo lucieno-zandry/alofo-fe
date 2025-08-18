@@ -31,7 +31,9 @@ class UserDropdown extends StatelessWidget {
                     onTap: () {
                       context.go(PagesUris.settingsPage);
                     },
-                    child: Row(children: [Icon(Icons.person), Text('Account')]),
+                    child: Row(
+                      children: [Icon(Icons.settings), Text('Settings')],
+                    ),
                   ),
                   PopupMenuItem(
                     onTap: () {

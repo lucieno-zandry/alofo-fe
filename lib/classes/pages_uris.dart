@@ -1,7 +1,7 @@
 class PagesUris {
   static String homePage = '/';
-  static String addressesPage = '/account/addresses';
+  static String addressesSettings = '/settings/addresses';
   static String productPage = '/product/:id';
-  static String productsPage = '/products';
-  static String settingsPage = '/account/settings';
+  static String productsPage = '/products/:id';
+  static String settingsPage = '/settings';
 }

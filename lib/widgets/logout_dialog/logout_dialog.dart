@@ -21,6 +21,7 @@ class LogoutDialog extends StatelessWidget {
           onPressed: () {
             state.setUser(null);
             LocalStorage.removeItem('authorization_token');
+            LocalStorage.removeItem('client_code');
             context.go(PagesUris.homePage);
             Navigator.of(context).pop();
           },
